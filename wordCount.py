@@ -1,11 +1,10 @@
 import os
-from utility import deaccent
 from bs4 import BeautifulSoup
 
 folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text', 'PerseusUnfolded')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
-fileCount = 1
+fileCount = 0
 wordCount = 0
 for file in indir:
     if file[-4:] == '.xml':
@@ -17,5 +16,5 @@ for file in indir:
         fileCount += 1
         print(fileCount, file)
 
-#print(fileCount-1, 'files in', folderPath)
+print(fileCount-1, 'files in', folderPath)
 print(wordCount, 'words in corpus.')
