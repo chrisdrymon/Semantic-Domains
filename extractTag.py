@@ -6,14 +6,13 @@ folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Pl
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 fileCount = 1
-greekChars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
-              'φ', 'χ', 'ψ', 'ω']
+
 for file in indir:
     noteCount = 0
     greekCount = 0
     if file[-4:] == '.xml':
         print(fileCount, file)
-        greekFile = open(file, 'r')
+        greekFile = open(file, 'r', encoding='utf-8')
         greekText = BeautifulSoup(greekFile, 'lxml')
         if greekText.author:
             author = greekText.author.text
@@ -31,6 +30,6 @@ for file in indir:
         print(noteCount, 'notes extracted.')
         greekFile.close()
         with open(file, 'w') as writefile:
-            writefile.write(greekText.prettify())
+            writefile.write(str(greekText))
 
 print(fileCount-1, 'files in', folderPath)

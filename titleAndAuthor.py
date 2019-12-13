@@ -2,17 +2,20 @@ import os
 from bs4 import BeautifulSoup
 import pandas as pd
 from utility import deaccent
+from collections import Counter
 
 folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                          'OpenGreekAndLatin-First1KGreek-0e92640')
+                          'OpenGreekAndLatin-First1KGreek-0e92640', '1.1 No Notes or Commentary')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 fileCount = 1
+otherCounter = Counter()
 greekChars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
               'φ', 'χ', 'ψ', 'ω']
 listOfLists = []
 for file in indir:
     wordCount = 0
+    greekWordCount = 0
     if file[-4:] == '.xml':
         print(fileCount, file)
         perseusText = open(file, 'r')
@@ -27,13 +30,20 @@ for file in indir:
             title = openText.title.text
         for paragraphs in openText.find_all('body'):
             for word in paragraphs.text.split():
+                wordCount += 1
                 simpleWord = deaccent(word)
                 if any(letter in greekChars for letter in simpleWord):
-                    wordCount += 1
-        print(author, title, wordCount)
-        textList = [author, title, file, 'First1K', wordCount]
+                    greekWordCount += 1
+                else:
+                    otherCounter[word] += 1
+        disparity = wordCount - greekWordCount
+        percentOther = disparity/wordCount
+        textList = [author, title, file, 'First1K', greekWordCount, wordCount, disparity, "{:.2f}".format(percentOther)]
         listOfLists.append(textList)
         fileCount += 1
-df = pd.DataFrame(listOfLists, columns=['Author', 'Title', 'File Name', 'Collection', 'Word Count'])
-df.to_csv('first1k.csv', encoding='utf-8')
+        print(textList)
+df = pd.DataFrame(listOfLists, columns=['Author', 'Title', 'File Name', 'Collection', 'Greek Words', 'Word Count',
+                                        'Disparity', 'Percent Other'])
+df.to_csv('first1kcount.csv', encoding='utf-8')
+print(otherCounter)
 print(fileCount-1, 'files in', folderPath)

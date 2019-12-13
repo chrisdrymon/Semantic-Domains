@@ -1,17 +1,35 @@
 import os
-from utility import deaccent
 from bs4 import BeautifulSoup
 
-filePath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                        'OpenGreekAndLatin-First1KGreek-0e92640', 'tlg5023.tlg014.1st1K-grc1.xml')
-wordCount = 0
-perseusText = open(filePath, 'r')
-openText = BeautifulSoup(perseusText, 'lxml')
-greekChars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
-              'φ', 'χ', 'ψ', 'ω']
-for bodyText in openText.find_all('body'):
-    for word in bodyText.text.split():
-        simpleWord = deaccent(word)
-        if any(letter in greekChars for letter in simpleWord):
-            wordCount += 1
-print(wordCount)
+folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
+                          'OpenGreekAndLatin-First1KGreek-0e92640', '1.1 No Notes')
+os.chdir(folderPath)
+indir = os.listdir(folderPath)
+fileCount = 1
+
+for file in indir:
+    noteCount = 0
+    greekCount = 0
+    if file[-4:] == '.xml':
+        print(fileCount, file)
+        greekFile = open(file, 'r', encoding='utf-8')
+        greekText = BeautifulSoup(greekFile, 'lxml')
+        if greekText.author:
+            author = greekText.author.text
+        else:
+            author = 'Unknown'
+        if greekText.title.text == 'Machine readable text':
+            title = greekText.find_all('title')[1].text
+        else:
+            title = greekText.title.text
+        print(author, title)
+        for paragraphs in greekText.find_all('note'):
+            paragraphs.decompose()
+            noteCount += 1
+        fileCount += 1
+        print(noteCount, 'notes extracted.')
+        greekFile.close()
+        with open(file, 'w') as writefile:
+            writefile.write(str(greekText))
+
+print(fileCount-1, 'files in', folderPath)
