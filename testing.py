@@ -1,20 +1,17 @@
 import os
 from utility import deaccent
 from bs4 import BeautifulSoup
-from collections import Counter
 
-folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text', 'PerseusUnfolded')
-os.chdir(folderPath)
-indir = os.listdir(folderPath)
-fileCount = 0
+filePath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
+                        'OpenGreekAndLatin-First1KGreek-0e92640', 'tlg5023.tlg014.1st1K-grc1.xml')
 wordCount = 0
-wordList = Counter()
-for file in indir:
-    if file[-4:] == '.xml':
-        perseusText = open(file, 'r')
-        openText = BeautifulSoup(perseusText, 'lxml-xml')
-        for paragraph in openText.find_all('p'):
-            for word in paragraph.text.split():
-                if word == 'ἐνδοξότερον':
-                    print('Susana at', file, '.')
-        perseusText.close()
+perseusText = open(filePath, 'r')
+openText = BeautifulSoup(perseusText, 'lxml')
+greekChars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
+              'φ', 'χ', 'ψ', 'ω']
+for bodyText in openText.find_all('body'):
+    for word in bodyText.text.split():
+        simpleWord = deaccent(word)
+        if any(letter in greekChars for letter in simpleWord):
+            wordCount += 1
+print(wordCount)
