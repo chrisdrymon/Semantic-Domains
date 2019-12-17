@@ -5,7 +5,7 @@ from utility import deaccent
 from collections import Counter
 
 folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                          'OpenGreekAndLatin-First1KGreek-0e92640', '1.1 No Notes or Commentary')
+                          'OpenGreekAndLatin-First1KGreek-0e92640', '1.2 Removing Latin')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 fileCount = 1
@@ -28,7 +28,7 @@ for file in indir:
             title = openText.find_all('title')[1].text
         else:
             title = openText.title.text
-        for paragraphs in openText.find_all('body'):
+        for paragraphs in openText.find_all('text'):
             for word in paragraphs.text.split():
                 wordCount += 1
                 simpleWord = deaccent(word)
@@ -44,6 +44,6 @@ for file in indir:
         print(textList)
 df = pd.DataFrame(listOfLists, columns=['Author', 'Title', 'File Name', 'Collection', 'Greek Words', 'Word Count',
                                         'Disparity', 'Percent Other'])
-df.to_csv('first1kcount.csv', encoding='utf-8')
+df.to_csv('textcount.csv', encoding='utf-8')
 print(otherCounter)
 print(fileCount-1, 'files in', folderPath)
