@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from utility import deaccent
 
 folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                          'OpenGreekAndLatin-First1KGreek-0e92640', '1.2 Removing Latin')
+                          'Perseus and OGL', '1.1 No Notes Index or Latin')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 fileCount = 1
@@ -45,6 +45,7 @@ for file in indir:
         fileCount += 1
         print(noteCount, 'notes extracted.')
         print(indexCount, 'indexes extracted.')
+        print(graphCount, 'paragraphs extracted.')
         greekFile.close()
         with open(file, 'w') as writefile:
             writefile.write(str(greekText))

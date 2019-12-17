@@ -5,7 +5,7 @@ from utility import deaccent
 from collections import Counter
 
 folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                          'OpenGreekAndLatin-First1KGreek-0e92640', '1.2 Removing Latin')
+                          'Perseus and OGL', '1.1 No Notes Index or Latin')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 fileCount = 1
@@ -38,12 +38,12 @@ for file in indir:
                     otherCounter[word] += 1
         disparity = wordCount - greekWordCount
         percentOther = disparity/wordCount
-        textList = [author, title, file, 'First1K', greekWordCount, wordCount, disparity, "{:.2f}".format(percentOther)]
+        textList = [author, title, file, greekWordCount, wordCount, disparity, "{:.4f}".format(percentOther)]
         listOfLists.append(textList)
         fileCount += 1
         print(textList)
-df = pd.DataFrame(listOfLists, columns=['Author', 'Title', 'File Name', 'Collection', 'Greek Words', 'Word Count',
+df = pd.DataFrame(listOfLists, columns=['Author', 'Title', 'File Name', 'Greek Words', 'Word Count',
                                         'Disparity', 'Percent Other'])
-df.to_csv('textcount.csv', encoding='utf-8')
+df.to_csv('wordcounter.csv', encoding='utf-8')
 print(otherCounter)
 print(fileCount-1, 'files in', folderPath)
