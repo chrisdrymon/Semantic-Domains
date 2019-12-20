@@ -3,12 +3,13 @@ from utility import deaccent
 from bs4 import BeautifulSoup
 from collections import Counter
 import pandas
+import re
 
 folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text', 'Perseus and OGL',
                           '1.1 No Notes Index or Latin')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
-fileCount = 0
+fileCount = 1
 wordCount = 0
 wordList = Counter()
 
@@ -19,19 +20,21 @@ for file in indir:
         openText = BeautifulSoup(perseusText, 'lxml-xml')
         for paragraph in openText.find_all('p'):
             i = 0
-            for word in paragraph:
-                if deaccent(word) == 'αντι':
-                    try:
-                        # gotta fix everything from here on to match the lemmatized paragraph
-                        nextWord = paragraph[i+1]
-                    except IndexError:
-                        nextWord = 'none'
-                    print(word, nextWord)
-                    wordCount += 1
-                    wordList[deaccent(nextWord)] += 1
-                i += 1
+            splitGraph = re.split('[·;.]', paragraph.text)
+            for sentence in splitGraph:
+                for word in sentence:
+                    if deaccent(word) == 'αντι':
+                        try:
+                            nextWord = paragraph[i+1]
+                        except IndexError:
+                            nextWord = 'none'
+                        print(word, nextWord)
+                        wordCount += 1
+                        wordList[deaccent(nextWord)] += 1
+                    i += 1
         fileCount += 1
-
+df = pandas.DataFrame.from_dict(wordList, orient='index').reset_index()
+df.to_csv('Antis.csv', encoding='utf-8')
 print(fileCount-1, 'files in', folderPath)
 print(wordCount, 'αντιs in corpus.')
 print(wordList)

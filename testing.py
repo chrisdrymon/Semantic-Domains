@@ -1,7 +1,9 @@
 from cltk.lemmatize.greek.backoff import BackoffGreekLemmatizer
+import re
 
-sentence = 'κατέβην χθὲς εἰς Πειραιᾶ μετὰ Γλαύκωνος τοῦ Ἀρίστωνος'.split()
+sentence = 'ἦν δὲ καὶ Σερβιλία Κάτωνος ὁμομήτριος ἀδελφή. καὶ πραγματείας παραδεχομένους· γίνεται γὰρ οἷον ἔγκαυμα. τί λέγεις; οὐχ οἷος.'
 
-lemmatizer = BackoffGreekLemmatizer()
+print(re.split('[·;.]', sentence))
+#lemmatizer = BackoffGreekLemmatizer()
 
-print(lemmatizer.lemmatize(sentence)[3])
+#print(lemmatizer.lemmatize(sentence)[3])
