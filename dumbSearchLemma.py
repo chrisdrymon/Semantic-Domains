@@ -22,7 +22,7 @@ for file in indir:
         perseusText = open(file, 'r')
         openText = BeautifulSoup(perseusText, 'lxml')
         for texts in openText.find_all('text'):
-            splitGraph = re.split('[·;.]', texts.text)
+            splitGraph = re.split('[·;.,]', texts.text)
             for sentence in splitGraph:
                 splitSentence = sentence.split()
                 lemmad = lemmatizer.lemmatize(splitSentence)
@@ -42,7 +42,7 @@ for file in indir:
         fileCount += 1
         print(smallWordCount, 'αντιs in work.')
 df = pandas.DataFrame.from_dict(wordList, orient='index').reset_index()
-df.to_csv('AntiLems.csv', encoding='utf-8')
+df.to_csv('AntiLems2.csv', encoding='utf-8')
 print(fileCount-1, 'files in', folderPath)
 print(wordCount, 'αντιs in corpus.')
 print(wordList)
