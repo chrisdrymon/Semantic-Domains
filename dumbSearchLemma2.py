@@ -22,7 +22,7 @@ for file in indir:
         perseusText = open(file, 'r')
         openText = BeautifulSoup(perseusText, 'lxml')
         for texts in openText.find_all('text'):
-            splitGraph = re.split('[·;.,]', texts.text)
+            splitGraph = re.split('[··;.,]', texts.text)
             for sentence in splitGraph:
                 splitSentence = sentence.split()
                 lemmad = lemmatizer.lemmatize(splitSentence)
