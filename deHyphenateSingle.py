@@ -7,7 +7,8 @@ doc = '''
 <text>
 <div n="43" subtype="chapter" type="textpart">
 <p>43. Ἢν δὲ αἷμα ἐκ τόκου ἐμέσῃ, τοῦ ἥπατος θρὶξ τέτρωται,
-<lb></lb>καὶ ὀδύνη πρὸς τὰ σπλάχνα φοιτᾷ, καὶ τὴν καρδίην σπᾶται. Ταύτην
+<lb></lb>καὶ ὀδύνη πρὸς τὰ σπλάχνα φοιτᾷ, καὶ τὴν καρδίην σπᾶται. Ταύ-
+την
 <lb></lb>χρὴ λούειν πολλῷ θερμῷ, καὶ τῶν χλιασμάτων ἃ μάλιστα προσδέ-
 
 <pb n="102"></pb>
@@ -28,8 +29,9 @@ wordOne = ''
 doc2 = ''
 stopCharacters = [' ', '\n']
 k = 0
+ignoreHyph = 'off'
 
-# If a < occurs, don't copy characters to the message until after a > occurs.
+# If a < (less than sign) occurs, don't copy characters to the message until after a > occurs.
 # Copy every character to the new document except for the hyphenation at the end of a line.
 # After a hyphenation-new line, the following characters needs to be appended to the end of the previous word until a
 # space character.
@@ -45,8 +47,9 @@ for char in doc:
         wordOne = ''
     else:
         wordOne = wordOne + char
+    # Check if a line ends with letters + hyphen with no space between
     if char == '-':
-        if doc[i + 1] == '\n':
+        if doc[i + 1] == '\n' and doc[i - 1] is not ' ':
             # I can't just look for Greek here because there might be Greek within a tag. I have to make sure a tag is
             # closed.
             nextChar = doc[i + j]
@@ -54,24 +57,29 @@ for char in doc:
                 j += 1
                 if doc[i + j] == '<':
                     bTag = 'open'
+                nextChar = doc[i + j]
                 if doc[i + j] == '>':
                     bTag = 'closed'
-                nextChar = doc[i + j]
-            firstChar = doc[i + j - 1]
-            addWord = firstChar
-            k = 1
-            while nextChar is not ' ':
+            addWord = ''
+            k = 0
+            while nextChar not in stopCharacters:
                 addWord = addWord + nextChar
                 j += 1
                 k += 1
                 nextChar = doc[i + j]
+            delSpaces = len(wordOne)-1
             combinedWord = wordOne[:-1] + addWord + '\n'
-    if k > 0 and bracket == 'closed':
+            doc2 = doc2[:-delSpaces] + combinedWord
+            ignoreHyph = 'on'
+    # Around here, doc2 = doc2[0:-4] + addWord or whatever then insert a counter to keep track of first part of word.
+    if k > 0 and bracket == 'closed' and deaccent(char) in greekChars:
         k -= 1
+    elif ignoreHyph == 'on':
+        ignoreHyph = 'off'
     else:
         doc2 = doc2 + char
     if char == '>':
         bracket = 'closed'
     i += 1
+print("New Document\n\n")
 print(doc2)
-print(combinedWord)
