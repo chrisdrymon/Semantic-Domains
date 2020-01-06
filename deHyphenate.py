@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 from utility import deaccent
 
 greekChars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
@@ -21,8 +20,6 @@ doc = '''
 </div></text>
 '''
 
-# soup = BeautifulSoup(doc, 'lxml')
-# soupCopy = soup
 print(doc)
 i = 0
 bracket = 'closed'
@@ -30,11 +27,13 @@ message = ''
 wordOne = ''
 doc2 = ''
 stopCharacters = [' ', '\n']
+k = 0
 
 # If a < occurs, don't copy characters to the message until after a > occurs.
 # Copy every character to the new document except for the hyphenation at the end of a line.
 # After a hyphenation-new line, the following characters needs to be appended to the end of the previous word until a
 # space character.
+
 for char in doc:
     j = 2
     bTag = 'closed'
@@ -42,8 +41,6 @@ for char in doc:
         bracket = 'open'
     if bracket == 'closed':
         message = message + char
-    if char == '>':
-        bracket = 'closed'
     if char == ' ' or char == '\n':
         wordOne = ''
     else:
@@ -53,18 +50,28 @@ for char in doc:
             # I can't just look for Greek here because there might be Greek within a tag. I have to make sure a tag is
             # closed.
             nextChar = doc[i + j]
-            while deaccent(nextChar) not in greekChars:
+            while deaccent(nextChar) not in greekChars or bTag == 'open':
                 j += 1
                 if doc[i + j] == '<':
                     bTag = 'open'
+                if doc[i + j] == '>':
+                    bTag = 'closed'
                 nextChar = doc[i + j]
-
-
-
-        else:
-            doc2 = doc2 + char
+            firstChar = doc[i + j - 1]
+            addWord = firstChar
+            k = 1
+            while nextChar is not ' ':
+                addWord = addWord + nextChar
+                j += 1
+                k += 1
+                nextChar = doc[i + j]
+            combinedWord = wordOne[:-1] + addWord + '\n'
+    if k > 0 and bracket == 'closed':
+        k -= 1
     else:
         doc2 = doc2 + char
+    if char == '>':
+        bracket = 'closed'
     i += 1
-print(message)
 print(doc2)
+print(combinedWord)

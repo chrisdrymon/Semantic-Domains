@@ -1,7 +1,4 @@
-testNum = 'This is an ' \
-          'interesting thing.'
-numbs = [' ', '\n']
-i = 0
-while testNum[i] not in numbs:
-    print(testNum[i])
-    i += 1
+i = 7
+while i > 0:
+    print(i)
+    i -= 1
