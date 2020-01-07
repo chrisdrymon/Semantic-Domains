@@ -4,8 +4,7 @@ import os
 greekChars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
               'φ', 'χ', 'ψ', 'ω']
 
-folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                          'Perseus and OGL', '1.2 No Hyphens')
+folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text', 'Perseus and OGL')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 
@@ -20,27 +19,34 @@ for file in indir:
     print(file)
     docunread = open(file, 'r', encoding='utf-8')
     doc = docunread.read()
+    hyphenTot = 0
+    hyphenations = 0
 
     # If a < (less than sign) occurs, don't copy characters to the message until after a > occurs.
     # Copy every character to the new document except for the hyphenation at the end of a line.
-    # After a hyphenation-new line, the following characters needs to be appended to the end of the previous word until a
-    # space character.
+    # After a hyphenation-new line, the following characters needs to be appended to the end of the previous word until
+    # a space character.
 
     for char in doc:
         j = 2
-        hyphenations = 0
+        # Here to make PyCharm shut up. Assumes tags which will be looked at ahead of a hypenation are closed by
+        # default.
         bTag = 'closed'
+        # This keeps track of whether a tag is opened or not. The close check needs to happen toward the end of this
+        # section.
         if char == '<':
             bracket = 'open'
-        if char == ' ' or char == '\n':
+        # This keeps track of the letters that will be the first part of the hyphenated word. It resets after every
+        # space or new line.
+        if char in stopCharacters:
             wordOne = ''
         else:
             wordOne = wordOne + char
-        # Check if a line ends with letters + hyphen with no space between
-        if char == '-':
-            if doc[i + 1] == '\n' and doc[i - 1] is not ' ':
-                # I can't just look for Greek here because there might be Greek within a tag. I have to make sure a tag is
-                # closed.
+        # Check if a line ends with characters + hyphen with no space between and the tag is closed.
+        if bTag == 'closed' and char == '-':
+            if doc[i - 1] not in stopCharacters and doc[i + 1] == '\n':
+                # I can't just look for Greek here because there might be Greek within a tag. I have to make sure a tag
+                # is closed.
                 nextChar = doc[i + j]
                 while deaccent(nextChar) not in greekChars or bTag == 'open':
                     j += 1
@@ -61,7 +67,9 @@ for file in indir:
                 doc2 = doc2[:-delSpaces] + combinedWord
                 ignoreHyph = 'on'
                 hyphenations += 1
-        # Around here, doc2 = doc2[0:-4] + addWord or whatever then insert a counter to keep track of first part of word.
+            hyphenTot = hyphenTot + hyphenations
+        # Around here, doc2 = doc2[0:-4] + addWord or whatever then insert a counter to keep track of first part of
+        # word.
         if k > 0 and bracket == 'closed' and deaccent(char) in greekChars:
             k -= 1
         elif ignoreHyph == 'on':
@@ -74,3 +82,4 @@ for file in indir:
     docunread.close()
     with open(file, 'w') as writefile:
         writefile.write(str(doc2))
+    print(hyphenations, 'words dehyphenated.')
