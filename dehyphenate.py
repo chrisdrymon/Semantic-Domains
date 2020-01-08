@@ -8,9 +8,10 @@ stop_characters = [' ', '\n']
 invalid_hyphs = [' ', '\n', '-']
 hyphenation_total = 0
 file_count = 1
+files_changed = 0
 
 for file in indir:
-    print(file_count, file)
+    print(file, file_count)
     unread_doc = open(file, 'r', encoding='utf-8')
     doc = unread_doc.read()
     new_doc = ''
@@ -36,4 +37,6 @@ for file in indir:
     file_count += 1
     hyphenation_total += hyphenation_count
     print(hyphenation_count, 'words dehyphenated.')
-print(hyphenation_total, 'words dehyphenated in all.')
+    if hyphenation_count > 0:
+        files_changed += 1
+print(hyphenation_total, 'words dehyphenated across', files_changed)
