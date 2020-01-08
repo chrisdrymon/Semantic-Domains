@@ -8,6 +8,7 @@ end_characters = [' ', '.', ';', '·', '\n', ',']
 new_doc = ''
 total_lunes = 0
 file_count = 1
+file_changes = 0
 
 for file in indir:
     print(file, file_count)
@@ -29,7 +30,8 @@ for file in indir:
     with open(file, 'w') as writefile:
         writefile.write(new_doc)
     file_count += 1
-
     total_lunes += lunates
+    if lunates > 0:
+        file_changes += 1
     print(lunates, 'lunate sigmas converted.')
 print(total_lunes, 'total lunate sigmas converted.')
