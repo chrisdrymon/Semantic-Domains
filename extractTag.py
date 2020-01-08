@@ -15,6 +15,7 @@ for file in indir:
     indexCount = 0
     paragraphCount = 0
     graphCount = 0
+    bibl_count = 0
     if file[-4:] == '.xml':
         print(fileCount, file)
         greekFile = open(file, 'r', encoding='utf-8')
@@ -34,6 +35,9 @@ for file in indir:
         for indexTag in greekText.find_all('div', {'subtype': 'index'}):
             indexTag.decompose()
             indexCount += 1
+        for biblTag in greekText.find_all('bibl'):
+            biblTag.decompose()
+            bibl_count += 1
         for paragraph in greekText.find_all('p'):
             simGraph = deaccent(paragraph.text)
             if any(letter in greekChars for letter in simGraph):
