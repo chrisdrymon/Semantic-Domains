@@ -11,11 +11,15 @@ index_files_changed = 0
 bibl_files_changed = 0
 graph_files_changed = 0
 interp_files_changed = 0
+latin_graph_files_changed = 0
+foreign_file_changes = 0
 notes_total = 0
 indices_total = 0
 bibl_total = 0
 graph_total = 0
 interp_total = 0
+latin_graph_total = 0
+foreign_total = 0
 
 greek_chars = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'ς', 'τ', 'υ',
                'φ', 'χ', 'ψ', 'ω']
@@ -26,6 +30,8 @@ for file in indir:
     graph_count = 0
     bibl_count = 0
     interp_count = 0
+    latin_graph_count = 0
+    foreign_graph_count = 0
     if file[-4:] == '.xml':
         print(file_count, file)
         greek_file = open(file, 'r', encoding='utf-8')
@@ -57,6 +63,12 @@ for file in indir:
             else:
                 paragraph.decompose()
                 graph_count += 1
+        for latin_paragraph in greek_text.find_all('p', {'lang': 'la'}):
+            latin_paragraph.decompose()
+            latin_graph_count += 1
+        for foreign_graph in greek_text.find_all('foreign', {'lang': 'la'}):
+            foreign_graph.decompose()
+            foreign_graph_count += 1
         file_count += 1
         print(note_count, 'notes extracted.')
         print(index_count, 'indexes extracted.')
@@ -76,13 +88,21 @@ for file in indir:
         bibl_files_changed += 1
     if interp_count > 0:
         interp_files_changed += 1
+    if latin_graph_count > 0:
+        latin_graph_files_changed += 1
+    if foreign_graph_count > 0:
+        foreign_file_changes += 1
     notes_total += note_count
     indices_total += index_count
     graph_total += graph_count
     bibl_total += bibl_count
     interp_total += interp_count
+    latin_graph_total += latin_graph_count
+    foreign_total += foreign_graph_count
 print(notes_total, 'notes across', note_files_changed, 'files.')
 print(indices_total, 'indices across', index_files_changed, 'files.')
 print(graph_total, 'graphs across', graph_files_changed, 'files.')
 print(bibl_total, 'bibl tags across', bibl_files_changed, 'files.')
 print(interp_total, 'interp groups across', interp_files_changed, 'files.')
+print(latin_graph_total, 'latin paragraphs across', latin_graph_files_changed, 'files.')
+print(foreign_total, 'foreign paragraphs across', foreign_file_changes, 'files.')
