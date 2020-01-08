@@ -81,8 +81,8 @@ for file in indir:
     graph_total += graph_count
     bibl_total += bibl_count
     interp_total += interp_count
-print(notes_total, 'across', note_files_changed, 'files.')
-print(indices_total, 'across', index_files_changed, 'files.')
-print(graph_total, 'across', graph_files_changed, 'files.')
-print(bibl_total, 'across', bibl_files_changed, 'files.')
-print(interp_total, 'across', interp_files_changed, 'files.')
+print(notes_total, 'notes across', note_files_changed, 'files.')
+print(indices_total, 'indices across', index_files_changed, 'files.')
+print(graph_total, 'graphs across', graph_files_changed, 'files.')
+print(bibl_total, 'bibl tags across', bibl_files_changed, 'files.')
+print(interp_total, 'interp groups across', interp_files_changed, 'files.')
