@@ -34,4 +34,4 @@ for file in indir:
     if lunates > 0:
         file_changes += 1
     print(lunates, 'lunate sigmas converted.')
-print(total_lunes, 'total lunate sigmas converted.')
+print(total_lunes, 'total lunate sigmas converted across', file_changes)
