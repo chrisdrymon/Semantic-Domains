@@ -2,8 +2,7 @@ import os
 from bs4 import BeautifulSoup
 from utility import deaccent
 
-folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Plain Text',
-                          'Perseus and OGL', '1.1 No Notes Index or Latin')
+folderPath = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Unannotated', 'Perseus and OGL')
 os.chdir(folderPath)
 indir = os.listdir(folderPath)
 fileCount = 1
