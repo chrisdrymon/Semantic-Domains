@@ -39,4 +39,4 @@ for file in indir:
     print(hyphenation_count, 'words dehyphenated.')
     if hyphenation_count > 0:
         files_changed += 1
-print(hyphenation_total, 'words dehyphenated across', files_changed)
+print(hyphenation_total, 'words dehyphenated across', files_changed, 'files.')
