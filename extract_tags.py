@@ -63,12 +63,20 @@ for file in indir:
             else:
                 paragraph.decompose()
                 graph_count += 1
-        for latin_paragraph in greek_text.find_all('p', {'lang': 'la'}):
-            latin_paragraph.decompose()
-            latin_graph_count += 1
-        for foreign_graph in greek_text.find_all('foreign', {'lang': 'la'}):
-            foreign_graph.decompose()
-            foreign_graph_count += 1
+        just_text = greek_text.find_all('text')
+        for item in just_text:
+            for latin_paragraph in item.find_all(attrs={'lang': 'la'}):
+                latin_paragraph.decompose()
+                latin_graph_count += 1
+            for latin_paragraph in item.find_all(attrs={'lang': 'lat'}):
+                latin_paragraph.decompose()
+                latin_graph_count += 1
+            for foreign_graph in item.find_all(attrs={'xml:lang': 'la'}):
+                foreign_graph.decompose()
+                foreign_graph_count += 1
+            for foreign_graph in item.find_all(attrs={'xml:lang': 'lat'}):
+                foreign_graph.decompose()
+                foreign_graph_count += 1
         file_count += 1
         print(note_count, 'notes extracted.')
         print(index_count, 'indexes extracted.')
