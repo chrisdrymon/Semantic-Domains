@@ -18,7 +18,18 @@ for file in indir:
         while i < len(word_list):
             try:
                 if word_list[i]['lemma'] == 'punc1':
-                    word_list[i-1]['presentation-after'] = word_list[i]['form']
+                    j = 0
+                    k = 0
+                    all_punctuation = ''
+                    try:
+                        while word_list[i+j]['lemma'] == 'punc1':
+                            all_punctuation += word_list[i+j]['form']
+                            j += 1
+                    except IndexError:
+                        while k < j:
+                            all_punctuation += word_list[i+k]['form']
+                            k += 1
+                    word_list[i-1]['presentation-after'] = all_punctuation
                     punctuation_encountered += 1
             except KeyError:
                 pass

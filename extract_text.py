@@ -13,7 +13,7 @@ for file in indir:
     if file[-4:] == '.xml':
         print(file_count, file)
         greek_file = open(file, 'r', encoding='utf-8')
-        greek_text = BeautifulSoup(greek_file, 'lxml')
+        greek_text = BeautifulSoup(greek_file, 'xml')
         if greek_text.author:
             author = greek_text.author.text
         else:

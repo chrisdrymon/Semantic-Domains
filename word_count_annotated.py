@@ -28,11 +28,13 @@ for file in indir:
         total_tokens += token_count
         total_ws += ws_count
 
-        total = total_words + total_tokens + total_ws
-        totals = [total_words, total_tokens, total_ws]
+        total = word_count + token_count + ws_count
+        totals = [word_count, token_count, ws_count]
         for item in totals:
             if item not in [0, total]:
                 problem_files.append(file)
+        if total == 0:
+            problem_files.append(file)
 
         print(word_count, 'words,', token_count, 'tokens,', ws_count, 'ws.')
 

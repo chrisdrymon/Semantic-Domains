@@ -13,7 +13,7 @@ for file in indir:
     if file[-4:] == '.xml':
         print(fileCount, file)
         greekFile = open(file, 'r', encoding='utf-8')
-        greekText = BeautifulSoup(greekFile, 'lxml')
+        greekText = BeautifulSoup(greekFile, 'xml')
         for speaker in greekText.find_all('speaker'):
             speaker.decompose()
             speaker_count += 1
