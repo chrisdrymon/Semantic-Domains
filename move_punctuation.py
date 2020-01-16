@@ -16,27 +16,28 @@ for file in indir:
         greek_text = BeautifulSoup(greek_file, 'xml')
         word_list = greek_text.find_all('word')
         while i < len(word_list):
-            try:
-                if word_list[i]['lemma'] == 'punc1':
-                    j = 0
-                    k = 0
-                    all_punctuation = ''
-                    try:
-                        while word_list[i+j]['lemma'] == 'punc1':
-                            all_punctuation += word_list[i+j]['form']
-                            j += 1
-                    except IndexError:
-                        while k < j:
-                            all_punctuation += word_list[i+k]['form']
-                            k += 1
+            punc_change = 'no'
+            if 'postag' in word_list[i].attrs.keys():
+                j = 0
+                all_punctuation = ''
+                if word_list[i]['postag'] == 'u--------':
+                    while word_list[i+j]['postag'] == 'u--------':
+                        all_punctuation += word_list[i+j]['form']
+                        punc_change = 'yes'
+                        try:
+                            if 'postag' in word_list[i+j+1].attrs.keys():
+                                j += 1
+                            else:
+                                break
+                        except IndexError:
+                            break
                     word_list[i-1]['presentation-after'] = all_punctuation
-                    punctuation_encountered += 1
-            except KeyError:
-                pass
+            if punc_change == 'yes':
+                punctuation_encountered += 1
             i += 1
         for word_thing in greek_text.find_all('word'):
             try:
-                if word_thing['lemma'] == 'punc1':
+                if word_thing['postag'] == 'u--------':
                     word_thing.decompose()
             except KeyError:
                 pass
