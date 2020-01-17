@@ -1,7 +1,8 @@
-items = {'1': 'j', '2': 'k'}
-i = 0
-if '3' in items.keys():
-    print('3 is true')
-if '1' in items.keys():
-    print('1 is true')
-print(items.keys())
+import pickle
+import pandas as pd
+import numpy as np
+from utility import deaccent
+
+list1 = ['jon', 'john', 'michael']
+list2 = ['jon', 'george']
+print(np.unique(list1 + list2))
