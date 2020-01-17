@@ -12,7 +12,7 @@ for file in indir:
     if file[-4:] == '.xml':
         print(fileCount, file)
         greekFile = open(file, 'r', encoding='utf-8')
-        greekText = BeautifulSoup(greekFile, 'lxml')
+        greekText = BeautifulSoup(greekFile, 'xml')
         comments = greekText.find_all(string=lambda text: isinstance(text, Comment))
         for c in comments:
             commentCount += 1
