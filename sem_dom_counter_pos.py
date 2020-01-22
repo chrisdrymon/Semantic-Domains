@@ -18,6 +18,8 @@ pos0_dict = {'a': 'adj', 'n': 'noun', 'v': 'verb', 'd': 'adv', 'c': 'conj', 'g':
 pos2_dict = {'s': 'singular', 'p': 'plural', 'd': 'dual'}
 pos4_dict = {'i': 'indicative', 's': 'subjunctive', 'n': 'infinitive', 'm': 'imperative', 'p': 'participle',
              'o': 'optative'}
+proiel_pos_dict = {'A': 'adj', 'D': 'adv', 'S': 'article', 'M': 'numeral', 'N': 'noun', 'C': 'conj', 'G': 'conj',
+                   'P': 'pronoun', 'I': 'interjection', 'R': 'adposition', 'V': 'verb'}
 for file in indir:
     if file[-4:] == '.xml':
         word_count = 0
@@ -44,6 +46,19 @@ for file in indir:
                 if len(word['postag']) > 4:
                     if word['postag'][4] in pos4_dict:
                         pos = pos4_dict[word['postag'][4]]
+            if word.has_attr('part-of-speech'):
+                if len(word['part-of-speech']) > 0:
+                    if word['part-of-speech'][0] in proiel_pos_dict:
+                        pos = proiel_pos_dict[word['part-of-speech'][0]]
+                    else:
+                        pos = 'other'
+                else:
+                    pos = 'other'
+            if pos == 'verb':
+                if word.has_attr('morphology'):
+                    if len(word['morphology']) > 3:
+                        if word['morphology'][3] in pos4_dict:
+                            pos = pos4_dict[word['morphology'][3]]
             if lemma in by_lemma_dict:
                 for domain in by_lemma_dict[lemma]:
                     domain_pos = domain + ' (' + pos + ')'
