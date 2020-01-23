@@ -25,7 +25,7 @@ file_count = 0
 wiq_counter = 0
 wiq_sem_pref_dict = Counter()
 PMI_dict = {}
-preposition = 'περι'
+preposition = 'αμφι'
 for file in indir:
     if file[-4:] == '.xml':
         file_count += 1
@@ -108,5 +108,6 @@ for semantic_domain in all_sem_dom_ct_dict:
     PMI_dict[semantic_domain] = [PMI, mutual_occurrences, all_sem_dom_ct_dict[semantic_domain]]
 os.chdir(original_folder)
 filename_string = preposition+'_sem_dom_PMIs.csv'
-wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index')
+wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index', columns=['PMI', 'Co-occurrence',
+                                                                            'Domain Occurrence'])
 wiq_sem_dom_PMI.to_csv(filename_string)

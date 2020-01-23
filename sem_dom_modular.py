@@ -29,23 +29,21 @@ PMI_dict = {}
 eulogew_en_counter = 0
 wiq = 'ευλογεω'
 
-
 # Given the sentence words and head word, this function returns the words whose head is the head_word.
 def header(sentence_words, head_word):
     the_words = []
     if head_word.has_attr('id'):
         head_word_id = head_word['id']
-        for f_word in sentence_words:
-            if f_word.has_attr('head'):
-                word_head = f_word['head']
+        for word in sentence_words:
+            if word.has_attr('head'):
+                word_head = word['head']
                 if word_head == head_word_id:
-                    the_words.append(f_word)
-            if f_word.has_attr('head-id'):
-                word_head = f_word['head-id']
+                    the_words.append(word_head)
+            if word.has_attr('head-id'):
+                word_head = word['head-id']
                 if word_head == head_word_id:
-                    the_words.append(f_word)
+                    the_words.append(word_head)
     return the_words
-
 
 # Given a word, this will return its list of semantic domains (parts-of-speech)
 def agdt_semdom_pos_counter(word):
@@ -119,30 +117,88 @@ def agdt(f_words):
                                                             oop_lemma = oop['lemma']
 
 
+
+
+#def proiel(f_tokens):
+
+
 for file in indir:
-    if file[-4:] == '.xml' and file[:3] == 'new':
+    if file[-4:] == '.xml':
         print(file)
         file_count += 1
         xml_file = open(file, 'r')
         soup = BeautifulSoup(xml_file, 'xml')
         sentences = soup.find_all('sentence')
         for sentence in sentences:
-            i = 0
             tokens = sentence.find_all(['token'])
             words = sentence.find_all(['word'])
             if len(tokens) > 0:
-                for token in tokens:
-                    i += 1
-                    print(i, token['form'])
-                    to_head = header(tokens, token)
-                    for element in to_head:
-                        print(element['form'])
-                        time.sleep(0.5)
+                proiel(tokens)
             if len(words) > 0:
-                for word in words:
-                    i += 1
-                    print(i, word['form'])
-                    to_head = header(words, word)
-                    for element in to_head:
-                        print(element['form'])
-                        time.sleep(0.5)
+                agdt(words)
+
+                                    if en.has_attr('postag'):
+                                        word_pos = en['postag']
+#                                         if len(word_pos) > 0:
+#                                             if word_pos[0] in pos0_dict:
+#                                                 pos = pos0_dict[word['postag'][0]]
+#                                             else:
+#                                                 pos = 'other'
+#                                         else:
+#                                             pos = 'other'
+#                                         if pos == 'verb':
+#                                             if len(word_pos) > 4:
+#                                                 if word_pos[4] in pos4_dict:
+#                                                     pos = pos4_dict[word_pos[4]]
+#                                     else:
+#                                         pos = 'other'
+#                                     if word_lemma in by_lemma_dict:
+#                                         for domain in by_lemma_dict[word_lemma]:
+#                                             domain_pos = domain + ' (' + pos + ')'
+#                                             wiq_sem_pref_dict[domain_pos] += 1
+#                                     else:
+#                                         wiq_sem_pref_dict['lemma_unknown' + ' (' + pos + ')'] += 1
+#                             if word.has_attr('head-id'):
+#                                 if word['head-id'] == wiq_id:
+#                                     if word.has_attr('lemma'):
+#                                         word_lemma = deaccent(word['lemma']).lower()
+#                                     else:
+#                                         word_lemma = 'nolemma'
+#                                     if word.has_attr('part-of-speech'):
+#                                         word_pos = word['part-of-speech']
+#                                         if len(word_pos) > 0:
+#                                             if word_pos[0] in proiel_pos_dict:
+#                                                 pos = proiel_pos_dict[word_pos[0]]
+#                                             else:
+#                                                 pos = 'other'
+#                                         else:
+#                                             pos = 'other'
+#                                         if pos == 'verb':
+#                                             if word.has_attr('morphology'):
+#                                                 if len(word['morphology']) > 3:
+#                                                     if word['morphology'][3] in pos4_dict:
+#                                                         pos = pos4_dict[word['morphology'][3]]
+#                                     else:
+#                                         pos = 'other'
+#                                     if word_lemma in by_lemma_dict:
+#                                         for domain in by_lemma_dict[word_lemma]:
+#                                             domain_pos = domain + ' (' + pos + ')'
+#                                             wiq_sem_pref_dict[domain_pos] += 1
+#                                     else:
+#                                         wiq_sem_pref_dict['lemma_unknown' + ' (' + pos + ')'] += 1
+#         print(wiq_counter, wiq, file)
+#         xml_file.close()
+# for semantic_domain in all_sem_dom_ct_dict:
+#     if semantic_domain in wiq_sem_pref_dict:
+#         mutual_occurrences = wiq_sem_pref_dict[semantic_domain]
+#         sem_dom_occurrence = all_sem_dom_ct_dict[semantic_domain]
+#         PMI = math.log(mutual_occurrences/((wiq_counter * sem_dom_occurrence)/1107273), 2)
+#     else:
+#         PMI = 'N/A'
+#         mutual_occurrences = 0
+#     PMI_dict[semantic_domain] = [PMI, mutual_occurrences, all_sem_dom_ct_dict[semantic_domain]]
+# os.chdir(original_folder)
+# filename_string = wiq + '_sem_dom_PMIs.csv'
+# wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index', columns=['PMI', 'Co-occurrence',
+#                                                                             'Domain Occurrence'])
+# wiq_sem_dom_PMI.to_csv(filename_string)
