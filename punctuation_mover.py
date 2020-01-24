@@ -8,7 +8,7 @@ file_count = 1
 files_changed = 0
 total_punc_change = 0
 for file in indir:
-    if file[-4:] == '.xml':
+    if file[-4:] == '.xml' and file[:5] == 'aesop':
         punctuation_encountered = 0
         i = 0
         print(file)
