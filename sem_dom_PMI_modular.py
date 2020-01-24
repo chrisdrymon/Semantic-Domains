@@ -42,36 +42,7 @@ def give_dependents(sentence_words, head_word):
 # Given a word, this will return its list of semantic domains (parts-of-speech).
 def semdom_poser(f_word):
     semdom_pos_list = []
-    if f_word.has_attr('postag'):
-        if len(f_word['postag']) > 0:
-            pos0 = f_word['postag'][0]
-            if pos0 in pos0_dict:
-                pos = pos0_dict[pos0]
-                if pos == 'verb':
-                    if len(f_word['postag']) > 4:
-                        pos4 = f_word['postag'][4]
-                        if pos4 in pos4_dict:
-                            pos = pos4_dict[pos4]
-            else:
-                pos = 'other'
-        else:
-            pos = 'other'
-    elif f_word.has_attr('part-of-speech'):
-        if len(f_word['part-of-speech']) > 0:
-            pos0 = f_word['part-of-speech'][0]
-            if pos0 in proiel_pos_dict:
-                pos = proiel_pos_dict[pos0]
-                if pos == 'verb':
-                    if len(f_word['morphology']) > 3:
-                        pos3 = f_word['morphology'][3]
-                        if pos3 in pos4_dict:
-                            pos = pos4_dict[pos3]
-            else:
-                pos = 'other'
-        else:
-            pos = 'other'
-    else:
-        pos = 'other'
+    pos = poser(f_word)
     if f_word.has_attr('lemma'):
         lemma = deaccent(f_word['lemma']).lower()
         if lemma in by_lemma_dict:
@@ -102,13 +73,48 @@ def grammatical_number(f_word):
     return gram_num
 
 
+# This returns the part-of-speech or the mood if the part-of-speech is a verb for a given word.
+def poser(f_word):
+    if f_word.has_attr('postag'):
+        if len(f_word['postag']) > 0:
+            pos0 = f_word['postag'][0]
+            if pos0 in pos0_dict:
+                pos = pos0_dict[pos0]
+                if pos == 'verb':
+                    if len(f_word['postag']) > 4:
+                        pos4 = f_word['postag'][4]
+                        if pos4 in pos4_dict:
+                            pos = pos4_dict[pos4]
+            else:
+                pos = 'other'
+        else:
+            pos = 'other'
+    elif f_word.has_attr('part-of-speech'):
+        if len(f_word['part-of-speech']) > 0:
+            pos0 = f_word['part-of-speech'][0]
+            if pos0 in proiel_pos_dict:
+                pos = proiel_pos_dict[pos0]
+                if pos == 'verb':
+                    if len(f_word['morphology']) > 3:
+                        pos3 = f_word['morphology'][3]
+                        if pos3 in pos4_dict:
+                            pos = pos4_dict[pos3]
+            else:
+                pos = 'other'
+        else:
+            pos = 'other'
+    else:
+        pos = 'other'
+    return pos
+
+
 file_count = 0
 head_counter = 0
 head_plural_sem_pref_dict = Counter()
 PMI_dict = {}
 head_lemma = 'εν'
-dependent_dependent_lemma = 'ο'
-hd_plural = 0
+dependent_dependent_form = 'ο'
+hd_plural_cooccur = 0
 
 for file in indir:
     if file[-4:] == '.xml':
@@ -122,13 +128,12 @@ for file in indir:
             words = sentence.find_all('word')
             if len(tokens) > 0:
                 for token in tokens:
-                    oop_list = []
                     if token.has_attr('lemma'):
                         if deaccent(token['lemma']).lower() == head_lemma:
                             head_counter += 1
                             for element in give_dependents(tokens, token):
                                 if grammatical_number(element) == 'plural':
-                                    hd_plural += 1
+                                    hd_plural_cooccur += 1
                                     print(head_lemma, element['form'])
                                     for sem_dom_pos in semdom_poser(element):
                                         head_plural_sem_pref_dict[sem_dom_pos] += 1
@@ -139,25 +144,25 @@ for file in indir:
                             head_counter += 1
                             for element in give_dependents(words, word):
                                 if grammatical_number(element) == 'plural':
-                                    hd_plural += 1
+                                    hd_plural_cooccur += 1
                                     print(head_lemma, element['form'])
                                     for sem_dom_pos in semdom_poser(element):
                                         head_plural_sem_pref_dict[sem_dom_pos] += 1
-        print(head_counter, hd_plural)
+        print(head_counter, hd_plural_cooccur)
         xml_file.close()
 for semantic_domain_pos in all_sem_dom_pos_dict:
     if semantic_domain_pos in head_plural_sem_pref_dict:
         mutual_occurrences = head_plural_sem_pref_dict[semantic_domain_pos]
         sem_dom_occurrence = all_sem_dom_pos_dict[semantic_domain_pos]
-        PMI = math.log(mutual_occurrences / ((hd_plural * sem_dom_occurrence) / 1107273), 2)
+        PMI = math.log(mutual_occurrences / ((hd_plural_cooccur * sem_dom_occurrence) / 1107273), 2)
     else:
         PMI = 'N/A'
         mutual_occurrences = 0
     PMI_dict[semantic_domain_pos] = [PMI, mutual_occurrences, all_sem_dom_pos_dict[semantic_domain_pos]]
 print(head_lemma, 'occurs', head_counter, 'times.')
-print(head_lemma, '+', dependent_dependent_lemma, 'occurs', hd_plural, 'times.')
+print(head_lemma, '+ a plural occurs', hd_plural_cooccur, 'times.')
 os.chdir(original_folder)
-filename_string = head_lemma+'_'+dependent_dependent_lemma+'_sem_dom_PMIs.csv'
+filename_string = head_lemma + '_' + dependent_dependent_form + '_plural_sem_dom_PMIs.csv'
 wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index', columns=['PMI', 'Co-occurrence',
                                                                             'Domain Occurrence'])
 wiq_sem_dom_PMI.to_csv(filename_string)
