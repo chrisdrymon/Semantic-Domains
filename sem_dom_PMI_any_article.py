@@ -18,8 +18,10 @@ pos0_dict = {'a': 'adj', 'n': 'noun', 'v': 'verb', 'd': 'adv', 'c': 'conj', 'g':
 pos2_dict = {'s': 'singular', 'p': 'plural', 'd': 'dual'}
 pos4_dict = {'i': 'indicative', 's': 'subjunctive', 'n': 'infinitive', 'm': 'imperative', 'p': 'participle',
              'o': 'optative'}
+agdt2_rel_dict = {'obj': 'object'}
 proiel_pos_dict = {'A': 'adj', 'D': 'adv', 'S': 'article', 'M': 'numeral', 'N': 'noun', 'C': 'conj', 'G': 'conj',
                    'P': 'pronoun', 'I': 'interjection', 'R': 'adposition', 'V': 'verb'}
+proiel_rel_dict = {'aux': 'auxiliary', 'obl': 'oblique'}
 
 
 # Given the sentence find_all list and a head word, this function returns the words which depend on that head.

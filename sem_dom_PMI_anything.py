@@ -109,32 +109,23 @@ def poser(f_word):
 
 
 # This is designed to modify the semantic preference dictionary for prepositions without an article.
-def prep_no_art_dependent(sentence_words, f_head_counter, f_qualified_head_occurrence, f_sem_pref_dict):
+def prep_no_art_dependent(sentence_words, f_head_counter, f_sem_pref_dict):
     for f_head_word in sentence_words:
         if f_head_word.has_attr('lemma'):
             if deaccent(f_head_word['lemma']).lower() == head_lemma and poser(f_head_word) == head_pos:
                 f_head_counter += 1
-                status = 'anarthrous'
                 for f_dependent in give_dependents(sentence_words, f_head_word):
-                    for f_article in give_dependents(sentence_words, f_dependent):
-                        if f_article.has_attr('lemma'):
-                            if deaccent(f_article['lemma']).lower() == dependent_dependent_lemma:
-                                status = 'articular'
-                    if status == 'anarthrous':
-                        if f_dependent.has_attr('form'):
-                            print(head_lemma, f_dependent['form'])
-                        else:
-                            print(head_lemma)
-                        f_qualified_head_occurrence += 1
-                        # time.sleep(0.7)
-                        for f_sem_dom_pos in semdom_poser(f_dependent):
-                            f_sem_pref_dict[f_sem_dom_pos] += 1
-    return f_head_counter, f_qualified_head_occurrence, f_sem_pref_dict
+                    if f_dependent.has_attr('form'):
+                        print(head_lemma, f_dependent['form'])
+                    else:
+                        print(head_lemma)
+                    for f_sem_dom_pos in semdom_poser(f_dependent):
+                        f_sem_pref_dict[f_sem_dom_pos] += 1
+    return f_head_counter, f_sem_pref_dict
 
 
 file_count = 0
 head_counter = 0
-qualified_head_occurrence = 0
 corpus_tokens = 1107273
 sem_pref_dict = Counter()
 PMI_dict = {}
@@ -157,32 +148,26 @@ for file in indir:
             tokens = sentence.find_all('token')
             words = sentence.find_all('word')
             if len(tokens) > 0:
-                head_counter, qualified_head_occurrence, sem_pref_dict = prep_no_art_dependent(tokens, head_counter,
-                                                                                               qualified_head_occurrence,
-                                                                                               sem_pref_dict)
+                head_counter, sem_pref_dict = prep_no_art_dependent(tokens, head_counter, sem_pref_dict)
             if len(words) > 0:
-                head_counter, qualified_head_occurrence, sem_pref_dict = prep_no_art_dependent(words, head_counter,
-                                                                                               qualified_head_occurrence,
-                                                                                               sem_pref_dict)
-        print(head_counter, qualified_head_occurrence)
+                head_counter, sem_pref_dict = prep_no_art_dependent(words, head_counter, sem_pref_dict)
+        print(head_counter)
         xml_file.close()
-
 
 for semantic_domain_pos in all_sem_dom_pos_dict:
     sem_dom_occurrence = all_sem_dom_pos_dict[semantic_domain_pos]
     if semantic_domain_pos in sem_pref_dict:
         mutual_occurrences = sem_pref_dict[semantic_domain_pos]
-        PMI = math.log(mutual_occurrences / ((qualified_head_occurrence * sem_dom_occurrence) / corpus_tokens), 2)
+        PMI = math.log(mutual_occurrences / ((head_counter * sem_dom_occurrence) / corpus_tokens), 2)
         precision = '='
     else:
-        PMI = math.log(1 / ((qualified_head_occurrence * sem_dom_occurrence) / corpus_tokens), 2)
+        PMI = math.log(1 / ((head_counter * sem_dom_occurrence) / corpus_tokens), 2)
         precision = '<'
         mutual_occurrences = 0
     PMI_dict[semantic_domain_pos] = [precision, PMI, mutual_occurrences, all_sem_dom_pos_dict[semantic_domain_pos]]
 print(head_lemma, 'occurs', head_counter, 'times.')
-print(head_lemma, 'with no article occurs', qualified_head_occurrence, 'times.')
 os.chdir(original_folder)
-filename_string = head_lemma + '_no_article_sem_dom_PMIs.csv'
+filename_string = head_lemma + '_anything_sem_dom_PMIs.csv'
 wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index', columns=['Precision', 'PMI', 'Co-occurrence',
                                                                             'Domain Occurrence'])
 wiq_sem_dom_PMI.to_csv(filename_string)
