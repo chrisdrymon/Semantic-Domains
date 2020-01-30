@@ -134,7 +134,7 @@ qualified_head_occurrence = 0
 corpus_tokens = 1107273
 sem_pref_dict = Counter()
 PMI_dict = {}
-head_lemma = 'εν'
+head_lemma = 'αντι'
 head_pos = 'adposition'
 dependent_number = 'singular'
 dependent_pos = 'article'
@@ -177,7 +177,7 @@ for semantic_domain_pos in all_sem_dom_pos_dict:
         mutual_occurrences = 0
     PMI_dict[semantic_domain_pos] = [precision, PMI, mutual_occurrences, all_sem_dom_pos_dict[semantic_domain_pos]]
 print(head_lemma, 'occurs', head_counter, 'times.')
-print(head_lemma, dependent_dependent_lemma, dependent_dependent_number, qualified_head_occurrence, 'times.')
+print(head_lemma, dependent_dependent_lemma, qualified_head_occurrence, 'times.')
 os.chdir(original_folder)
 filename_string = head_lemma + '_any_ο_sem_dom_PMIs.csv'
 wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index', columns=['Precision', 'PMI', 'Co-occurrence',

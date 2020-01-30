@@ -20,12 +20,12 @@ for file in indir:
             if 'relation' in word_list[i].attrs.keys():
                 j = 0
                 all_punctuation = ''
-                if word_list[i]['relation'] == 'AuxK':
-                    while word_list[i+j]['relation'] == 'AuxK':
+                if word_list[i]['postag'] == 'u--------':
+                    while word_list[i+j]['postag'] == 'u--------':
                         all_punctuation += word_list[i+j]['form']
                         punc_change = 'yes'
                         try:
-                            if 'relation' in word_list[i+j+1].attrs.keys():
+                            if 'postag' in word_list[i+j+1].attrs.keys():
                                 j += 1
                             else:
                                 break
@@ -37,7 +37,7 @@ for file in indir:
             i += 1
         for word_thing in greek_text.find_all('word'):
             try:
-                if word_thing['relation'] == 'AuxK':
+                if word_thing['postag'] == 'u--------':
                     word_thing.decompose()
             except KeyError:
                 pass

@@ -133,12 +133,12 @@ qualified_head_occurrence = 0
 corpus_tokens = 1107273
 sem_pref_dict = Counter()
 PMI_dict = {}
-head_lemma = 'εν'
+head_lemma = 'αντι'
 head_pos = 'adposition'
 dependent_number = 'singular'
 dependent_pos = 'article'
 dependent_dependent_lemma = 'ο'
-dependent_dependent_number = 'singular'
+dependent_dependent_number = 'plural'
 dependent_dependent_pos = 'article'
 
 for file in indir:

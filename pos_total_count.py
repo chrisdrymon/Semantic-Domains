@@ -1,7 +1,7 @@
+import pickle
 import os
 from bs4 import BeautifulSoup
 from collections import Counter
-import time
 
 original_folder = os.getcwd()
 folder_path = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Annotated')
@@ -62,22 +62,18 @@ for file in indir:
         print(file_count, file)
         xml_file = open(file, 'r')
         soup = BeautifulSoup(xml_file, 'xml')
-        words = soup.find_all('word')
-        tokens = soup.find_all('token')
-
+        words = soup.find_all(['word', 'token'])
         for word in words:
-            if word.has_attr('artificial'):
+            if word.has_attr('empty-token-sort') or word.has_attr('artificial'):
                 pass
             else:
                 pos = poser(word)
-                if pos == 'other':
-                    print(word)
-                    time.sleep(1)
-        for token in tokens:
-            if token.has_attr('empty-token-sort'):
-                pass
-            else:
-                pos = poser(token)
-                if pos == 'other':
-                    print(token)
-                    time.sleep(1)
+                if pos in pos_dict:
+                    pos_dict[pos] += 1
+                else:
+                    pos_dict[pos] = 1
+        print(pos_dict)
+
+os.chdir(original_folder)
+with open('all_pos_count.pickle', 'wb') as handle:
+    pickle.dump(pos_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)

@@ -13,23 +13,11 @@ import time
 class SortAttributes(XMLFormatter):
     def attributes(self, tag):
         """Reorder a tag's attributes however you want."""
+        attrib_order = ['id', 'head', 'head-id', 'postag', 'morphology', 'relation', 'form', 'lemma']
         new_order = []
-        if 'id' in tag.attrs:
-            new_order.append(('id', tag['id']))
-        if 'head' in tag.attrs:
-            new_order.append(('head', tag['head']))
-        if 'head-id' in tag.attrs:
-            new_order.append(('head-id', tag['head-id']))
-        if 'postag' in tag.attrs:
-            new_order.append(('postag', tag['postag']))
-        if 'morphology' in tag.attrs:
-            new_order.append(('morphology', tag['morphology']))
-        if 'relation' in tag.attrs:
-            new_order.append(('relation', tag['relation']))
-        if 'form' in tag.attrs:
-            new_order.append(('form', tag['form']))
-        if 'lemma' in tag.attrs:
-            new_order.append(('lemma', tag['lemma']))
+        for element in attrib_order:
+            if element in tag.attrs:
+                new_order.append((element, tag[element]))
         for pair in tag.attrs.items():
             if pair not in new_order:
                 new_order.append(pair)
@@ -45,20 +33,12 @@ os.chdir(folder_path)
 indir = os.listdir(folder_path)
 
 file_count = 0
-
-for file in indir:
-    if file[-4:] == '.xml':
-        file_count += 1
-        print(file_count, file)
-        xml_file = open(file, 'r')
-        soup = BeautifulSoup(xml_file, 'xml')
-        sentences = soup.find_all('sentence')
-        for sentence in sentences:
-            tokens = sentence.find_all('token')
-            words = sentence.find_all('word')
-            for word in words:
-                dammit = UnicodeDammit(word.encode(formatter=SortAttributes()))
-                print(dammit.unicode_markup)
-                time.sleep(5)
-
-
+file = indir[4]
+print(file, file_count)
+greek_file = open(file, 'r', encoding='utf-8')
+greek_text = BeautifulSoup(greek_file, 'xml')
+new_text = greek_text.encode(formatter=SortAttributes())
+greek_file.close()
+print(attr_soup.p.encode(formatter=UnsortedAttributes()))
+with open(file, 'w') as writefile:
+    writefile.write(str(new_text))
