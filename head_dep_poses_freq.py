@@ -1,3 +1,6 @@
+# Given the part of speech for a head, and its dependent, this returns a frequency count of lemmas that follow that
+# pattern.
+
 import os
 from tabulate import tabulate
 from bs4 import BeautifulSoup
