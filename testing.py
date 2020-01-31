@@ -1,83 +1,15 @@
 import os
+from tabulate import tabulate
 from bs4 import BeautifulSoup
 from collections import Counter
-import time
 
-original_folder = os.getcwd()
-folder_path = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Annotated')
-os.chdir(folder_path)
-indir = os.listdir(folder_path)
+thing = Counter()
+thing['four'] = 4
+thing['nine'] = 9
+thing['seven'] = 7
 
-pos0_dict = {'a': 'adj', 'n': 'noun', 'v': 'verb', 'd': 'adv', 'c': 'conj', 'g': 'conj', 'r': 'adposition', 'b': 'conj',
-             'p': 'pronoun', 'l': 'article', 'i': 'interjection', 'x': 'other', 'm': 'numeral', 'e': 'interjection'}
-pos2_dict = {'s': 'singular', 'p': 'plural', 'd': 'dual'}
-pos4_dict = {'i': 'indicative', 's': 'subjunctive', 'n': 'infinitive', 'm': 'imperative', 'p': 'participle',
-             'o': 'optative'}
-agdt2_rel_dict = {'obj': 'object'}
-proiel_pos_dict = {'A': 'adj', 'D': 'adv', 'S': 'article', 'M': 'numeral', 'N': 'noun', 'C': 'conj', 'G': 'conj',
-                   'P': 'pronoun', 'I': 'interjection', 'R': 'adposition', 'V': 'verb'}
+top = thing.most_common(2)
 
-
-# This returns the part-of-speech or the mood if the part-of-speech is a verb for a given word.
-def poser(f_word):
-    if f_word.has_attr('postag'):
-        if len(f_word['postag']) > 0:
-            pos0 = f_word['postag'][0]
-            if pos0 in pos0_dict:
-                f_pos = pos0_dict[pos0]
-                if f_pos == 'verb':
-                    if len(f_word['postag']) > 4:
-                        pos4 = f_word['postag'][4]
-                        if pos4 in pos4_dict:
-                            f_pos = pos4_dict[pos4]
-            else:
-                f_pos = 'other'
-        else:
-            f_pos = 'other'
-    elif f_word.has_attr('part-of-speech'):
-        if len(f_word['part-of-speech']) > 0:
-            pos0 = f_word['part-of-speech'][0]
-            if pos0 in proiel_pos_dict:
-                f_pos = proiel_pos_dict[pos0]
-                if f_pos == 'verb':
-                    if len(f_word['morphology']) > 3:
-                        pos3 = f_word['morphology'][3]
-                        if pos3 in pos4_dict:
-                            f_pos = pos4_dict[pos3]
-            else:
-                f_pos = 'other'
-        else:
-            f_pos = 'other'
-    else:
-        f_pos = 'other'
-    return f_pos
-
-
-file_count = 0
-pos_dict = Counter()
-
-for file in indir:
-    if file[-4:] == '.xml':
-        file_count += 1
-        print(file_count, file)
-        xml_file = open(file, 'r')
-        soup = BeautifulSoup(xml_file, 'xml')
-        words = soup.find_all('word')
-        tokens = soup.find_all('token')
-
-        for word in words:
-            if word.has_attr('artificial'):
-                pass
-            else:
-                pos = poser(word)
-                if pos == 'other':
-                    print(word)
-                    time.sleep(1)
-        for token in tokens:
-            if token.has_attr('empty-token-sort'):
-                pass
-            else:
-                pos = poser(token)
-                if pos == 'other':
-                    print(token)
-                    time.sleep(1)
+tot_row = [('name', 'number')]
+newtot = tot_row + top
+print(tabulate(newtot, headers='firstrow', tablefmt='pipe'))
