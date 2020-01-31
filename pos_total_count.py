@@ -2,6 +2,7 @@ import pickle
 import os
 from bs4 import BeautifulSoup
 from collections import Counter
+from utility import poser
 
 original_folder = os.getcwd()
 folder_path = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Annotated')
@@ -17,42 +18,6 @@ agdt2_rel_dict = {'obj': 'object'}
 proiel_pos_dict = {'A': 'adj', 'D': 'adv', 'S': 'article', 'M': 'numeral', 'N': 'noun', 'C': 'conj', 'G': 'conj',
                    'P': 'pronoun', 'I': 'interjection', 'R': 'adposition', 'V': 'verb'}
 
-
-# This returns the part-of-speech or the mood if the part-of-speech is a verb for a given word.
-def poser(f_word):
-    if f_word.has_attr('postag'):
-        if len(f_word['postag']) > 0:
-            pos0 = f_word['postag'][0]
-            if pos0 in pos0_dict:
-                f_pos = pos0_dict[pos0]
-                if f_pos == 'verb':
-                    if len(f_word['postag']) > 4:
-                        pos4 = f_word['postag'][4]
-                        if pos4 in pos4_dict:
-                            f_pos = pos4_dict[pos4]
-            else:
-                f_pos = 'other'
-        else:
-            f_pos = 'other'
-    elif f_word.has_attr('part-of-speech'):
-        if len(f_word['part-of-speech']) > 0:
-            pos0 = f_word['part-of-speech'][0]
-            if pos0 in proiel_pos_dict:
-                f_pos = proiel_pos_dict[pos0]
-                if f_pos == 'verb':
-                    if len(f_word['morphology']) > 3:
-                        pos3 = f_word['morphology'][3]
-                        if pos3 in pos4_dict:
-                            f_pos = pos4_dict[pos3]
-            else:
-                f_pos = 'other'
-        else:
-            f_pos = 'other'
-    else:
-        f_pos = 'other'
-    return f_pos
-
-
 file_count = 0
 pos_dict = Counter()
 
@@ -62,15 +27,9 @@ for file in indir:
         print(file_count, file)
         xml_file = open(file, 'r')
         soup = BeautifulSoup(xml_file, 'xml')
-        words = soup.find_all(['word', 'token'])
-        sentences = soup.find_all('sentence')
-        for sentence in sentences:
-            tokens = sentence.find_all(['word', 'token'])
-            for token in tokens:
-                if token.has_attr('lemma'):
-                    if token['lemma'] == 'εν'
-
-
+        tokens = soup.find_all(['word', 'token'])
+        for token in tokens:
+            pos_dict[poser(token)] += 1
 os.chdir(original_folder)
 with open('all_pos_count.pickle', 'wb') as handle:
     pickle.dump(pos_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)

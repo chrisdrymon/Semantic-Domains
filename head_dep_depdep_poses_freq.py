@@ -1,8 +1,11 @@
+# Given the part of speech for a head, its dependent, and the dependent of the dependent, this returns a frequency
+# count of lemmas that follow this pattern.
+
 import os
 from tabulate import tabulate
 from bs4 import BeautifulSoup
 from collections import Counter
-from utility import deaccent, header, poser, give_dependents
+from utility import deaccent, poser, give_dependents
 
 original_folder = os.getcwd()
 folder_path = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Annotated')
