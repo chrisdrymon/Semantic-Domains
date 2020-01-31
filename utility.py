@@ -165,3 +165,20 @@ def poser(f_word):
     else:
         f_pos = 'other'
     return f_pos
+
+
+# Given the sentence find_all list and a head word, this function returns the words which depend on that head.
+def give_dependents(sentence_words, head_word):
+    the_words = []
+    if head_word.has_attr('id'):
+        head_word_id = head_word['id']
+        for f_word in sentence_words:
+            if f_word.has_attr('head'):
+                word_head = f_word['head']
+                if word_head == head_word_id:
+                    the_words.append(f_word)
+            if f_word.has_attr('head-id'):
+                word_head = f_word['head-id']
+                if word_head == head_word_id:
+                    the_words.append(f_word)
+    return the_words
