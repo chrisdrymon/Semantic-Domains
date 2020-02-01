@@ -1,3 +1,5 @@
+# Given a corpus, this returns the frequency of each part of speech
+
 import pickle
 import os
 from bs4 import BeautifulSoup
@@ -8,15 +10,6 @@ original_folder = os.getcwd()
 folder_path = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Annotated')
 os.chdir(folder_path)
 indir = os.listdir(folder_path)
-
-pos0_dict = {'a': 'adj', 'n': 'noun', 'v': 'verb', 'd': 'adv', 'c': 'conj', 'g': 'conj', 'r': 'adposition', 'b': 'conj',
-             'p': 'pronoun', 'l': 'article', 'i': 'interjection', 'x': 'other', 'm': 'numeral', 'e': 'interjection'}
-pos2_dict = {'s': 'singular', 'p': 'plural', 'd': 'dual'}
-pos4_dict = {'i': 'indicative', 's': 'subjunctive', 'n': 'infinitive', 'm': 'imperative', 'p': 'participle',
-             'o': 'optative'}
-agdt2_rel_dict = {'obj': 'object'}
-proiel_pos_dict = {'A': 'adj', 'D': 'adv', 'S': 'article', 'M': 'numeral', 'N': 'noun', 'C': 'conj', 'G': 'conj',
-                   'P': 'pronoun', 'I': 'interjection', 'R': 'adposition', 'V': 'verb'}
 
 file_count = 0
 pos_dict = Counter()

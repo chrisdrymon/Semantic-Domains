@@ -1,3 +1,5 @@
+# Given the Logos Semantic Domains TSV, this return a dictionary {lemma: [every semantic domain it is a member of]}
+
 import pickle
 import pandas as pd
 from utility import deaccent

@@ -1,9 +1,12 @@
 import string
 import os
 import xml.etree.ElementTree as ET
+import pickle
 
+by_lemma_dict = pickle.load(open('by_lemma_dictionary.pickle', 'rb'))
 pos0_dict = {'a': 'adj', 'n': 'noun', 'v': 'verb', 'd': 'adv', 'c': 'conj', 'g': 'conj', 'r': 'adposition', 'b': 'conj',
              'p': 'pronoun', 'l': 'article', 'i': 'interjection', 'x': 'other', 'm': 'numeral', 'e': 'interjection'}
+pos2_dict = {'s': 'singular', 'p': 'plural', 'd': 'dual'}
 pos4_dict = {'i': 'indicative', 's': 'subjunctive', 'n': 'infinitive', 'm': 'imperative', 'p': 'participle',
              'o': 'optative'}
 agdt2_rel_dict = {'obj': 'object'}
@@ -165,6 +168,40 @@ def poser(f_word):
     else:
         f_pos = 'other'
     return f_pos
+
+
+# Given a word, this will return its list of semantic domains (parts-of-speech).
+def semdom_poser(f_word):
+    semdom_pos_list = []
+    pos = poser(f_word)
+    if f_word.has_attr('lemma'):
+        lemma = deaccent(f_word['lemma']).lower()
+        if lemma in by_lemma_dict:
+            sem_doms = by_lemma_dict[lemma]
+        else:
+            sem_doms = ['lemma_unknown']
+    else:
+        sem_doms = ['lemma_unknown']
+    for domain in sem_doms:
+        sem_dom_poss = domain + ' (' + pos + ')'
+        semdom_pos_list.append(sem_dom_poss)
+    return semdom_pos_list
+
+
+# This takes a token or word and returns its number: singular, plural, dual, or other.
+def grammatical_number(f_word):
+    gram_num = 'other'
+    if f_word.has_attr('postag'):
+        if len(f_word['postag']) > 2:
+            pos2 = f_word['postag'][2]
+            if pos2 in pos2_dict:
+                gram_num = pos2_dict[pos2]
+    if f_word.has_attr('morphology'):
+        if len(f_word['morphology']) > 1:
+            pos1 = f_word['morphology'][1]
+            if pos1 in pos2_dict:
+                gram_num = pos2_dict[pos1]
+    return gram_num
 
 
 # Given the sentence find_all list and a head word, this function returns the words which depend on that head.

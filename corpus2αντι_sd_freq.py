@@ -1,3 +1,5 @@
+# This returns the semantic domain frequencies of dependents of αντι.
+
 import pickle
 import os
 from bs4 import BeautifulSoup

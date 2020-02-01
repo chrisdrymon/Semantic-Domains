@@ -1,3 +1,5 @@
+# Given a corpus, this returns frequency of every semantic domain
+
 import pickle
 import os
 from bs4 import BeautifulSoup

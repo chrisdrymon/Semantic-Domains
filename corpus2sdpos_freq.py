@@ -1,3 +1,5 @@
+# Given a corpus, this returns the frequency of each semantic domain according to part of speech, i.e. "semdom (pos)."
+
 import pickle
 import os
 from bs4 import BeautifulSoup

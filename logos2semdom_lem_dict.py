@@ -1,3 +1,6 @@
+# Given Logos' Semantic Domain database, this returns a dictionary {semantic domain: [every lemma occurring in that
+# semantic domain]}
+
 import pickle
 import pandas as pd
 from utility import deaccent

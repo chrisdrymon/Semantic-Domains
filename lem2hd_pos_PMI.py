@@ -1,11 +1,12 @@
+# Given a lemma, this returns the PMI of the parts of speech that act as its head.
+
 import os
 import math
 import pickle
-import pandas as pd
 from tabulate import tabulate
 from bs4 import BeautifulSoup
 from collections import Counter
-from utility import deaccent
+from utility import deaccent, header, poser
 
 original_folder = os.getcwd()
 folder_path = os.path.join(os.environ['HOME'], 'Google Drive', 'Greek Texts', 'Annotated')
@@ -20,57 +21,6 @@ pos4_dict = {'i': 'indicative', 's': 'subjunctive', 'n': 'infinitive', 'm': 'imp
 agdt2_rel_dict = {'obj': 'object'}
 proiel_pos_dict = {'A': 'adj', 'D': 'adv', 'S': 'article', 'M': 'numeral', 'N': 'noun', 'C': 'conj', 'G': 'conj',
                    'P': 'pronoun', 'I': 'interjection', 'R': 'adposition', 'V': 'verb'}
-
-
-# This returns the head of the word
-def header(f_sentence, f_word):
-    return_head = 'no head'
-    f_head_id = 0
-    if f_word.has_attr('head'):
-        f_head_id = f_word['head']
-    if f_word.has_attr('head-id'):
-        f_head_id = f_word['head-id']
-    for f_head in f_sentence:
-        if f_head.has_attr('id'):
-            if f_head['id'] == f_head_id:
-                return_head = f_head
-    return return_head
-
-
-# This returns the part-of-speech or the mood if the part-of-speech is a verb for a given word.
-def poser(f_word):
-    if f_word.has_attr('postag'):
-        if len(f_word['postag']) > 0:
-            pos0 = f_word['postag'][0]
-            if pos0 in pos0_dict:
-                f_pos = pos0_dict[pos0]
-                if f_pos == 'verb':
-                    if len(f_word['postag']) > 4:
-                        pos4 = f_word['postag'][4]
-                        if pos4 in pos4_dict:
-                            f_pos = pos4_dict[pos4]
-            else:
-                f_pos = 'other'
-        else:
-            f_pos = 'other'
-    elif f_word.has_attr('part-of-speech'):
-        if len(f_word['part-of-speech']) > 0:
-            pos0 = f_word['part-of-speech'][0]
-            if pos0 in proiel_pos_dict:
-                f_pos = proiel_pos_dict[pos0]
-                if f_pos == 'verb':
-                    if len(f_word['morphology']) > 3:
-                        pos3 = f_word['morphology'][3]
-                        if pos3 in pos4_dict:
-                            f_pos = pos4_dict[pos3]
-            else:
-                f_pos = 'other'
-        else:
-            f_pos = 'other'
-    else:
-        f_pos = 'other'
-    return f_pos
-
 
 file_count = 0
 dependent_count = 0
@@ -116,9 +66,7 @@ for key in all_pos_dict:
     PMI_dict[key] = [precision, round(PMI, 2), mutual_occurrence, pos_occurrence]
 print(dependent_lemma, 'occurs', dependent_count, 'times.')
 os.chdir(original_folder)
-filename_string = 'pos_' + dependent_lemma + '_PMIs.csv'
-wiq_sem_dom_PMI = pd.DataFrame.from_dict(PMI_dict, orient='index', columns=['Precision', 'PMI', 'Co-occurrence',
-                                                                            'POS Occurrence'])
+
 tableform = [['POS', 'p', 'PMI', 'Mutual', 'Tot POS']]
 for key in PMI_dict:
     new_list = [key] + PMI_dict[key]
