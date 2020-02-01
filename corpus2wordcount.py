@@ -1,3 +1,6 @@
+# Given a corpus, this returns a total word count. It excludes blank tokens which are attributed 'artificial' or
+# 'empty-token-sort'.
+
 import os
 from bs4 import BeautifulSoup
 
