@@ -1,9 +1,11 @@
 import string
 import os
-import xml.etree.ElementTree as ET
+import xml.etree.cElementTree as cET
 import pickle
 
-by_lemma_dict = pickle.load(open('by_lemma_dictionary.pickle', 'rb'))
+pickle_folder = os.path.join(os.environ['HOME'], 'PycharmProjects', 'Semantic-Domains')
+
+by_lemma_dict = pickle.load(open(os.path.join(pickle_folder, 'by_lemma_dictionary.pickle'), 'rb'))
 pos0_dict = {'a': 'adj', 'n': 'noun', 'v': 'verb', 'd': 'adv', 'c': 'conj', 'g': 'conj', 'r': 'adposition', 'b': 'conj',
              'p': 'pronoun', 'l': 'article', 'i': 'interjection', 'x': 'other', 'm': 'numeral', 'e': 'interjection'}
 pos2_dict = {'s': 'singular', 'p': 'plural', 'd': 'dual'}
@@ -62,7 +64,7 @@ def resequence():
         i = 1
         if not file_name == 'README.md' and not file_name == '.git':
             print(file_name)
-            tb = ET.parse(file_name)
+            tb = cET.parse(file_name)
             tbroot = tb.getroot()
             if tbroot.tag == 'treebank':
                 for body in tbroot:
